@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID Tracker</title>
+    <!-- import sematic ui individual links so not to interfere with bootstrap, not the whole semantic.ui -->
+    <link rel="stylesheet" href="https://semantic-ui.com/modules/dropdown.html#/definition" class="">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.css
+    " class="">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/dropdown.min.css">
+
+    <!--<link rel="stylesheet" href="style.css">-->
+    <link rel="stylesheet" href="new-style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <script src="https://kit.fontawesome.com/c939d0e917.js "></script>
+    <!--Import moment.js into our project to porperly display the dates for the chart-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+    <!--Content Delivery Network for Chart- CDn is simply a link to import external javascript, libraries etc.-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <!--Import Boot strap into our project-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!--Create another js file called map-style to hold the styling for init-map instead of placing it in script.js -->
+
+
+    <script src="map-style.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="script.js"></script>
+    <script src="charts.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container-fluid ">
+        <div class="row main">
+            <div class="col-12 col-lg-8">
+                <div class="row header-container">
+                    <div class="col-sm-6 title-container">
+                        <h1>Covid-19 Tracker</h1>
+                    </div>
+                    <div class="col-sm-6 search-container">
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="country">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Select Country</div>
+                            <div class="menu">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row stats-container">
+                    <div class="col-12 col-sm-3 mb-3 mb-sm-0">
+                        <div class="card cases active" onclick="changeDataSelection(this, 'cases')">
+                            <div class="tab-selection"></div>
+                            <div class="card-body">
+                                <h6 class="card-title">Coronavirus Cases</h6>
+                                <h3 class="card-subtitle mb-2 total-number">1,436,886 </h3>
+                                <div class="text-muted font-weight-bold total cases-total">1.69M Total</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-3 mb-3 mb-sm-0">
+                        <div class="card activec " onclick="changeDataSelection(this,'active')">
+                            <div class="tab-selection"></div>
+                            <div class="card-body">
+                                <h6 class="card-title">Active</h6>
+                                <h3 class="card-subtitle mb-2 active-number">1,049,886 </h3>
+                                <div class="text-muted font-weight-bold total active-total">1.69M Total</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-3 mb-3 mb-sm-0">
+                        <div class="card recovered" onclick="changeDataSelection(this, 'recovered')">
+                            <div class="tab-selection"></div>
+                            <div class="card-body">
+                                <h6 class="card-title">Recovered</h6>
+                                <h3 class="card-subtitle mb-2 recovered-number">1,933,445 </h3>
+                                <div class="text-muted font-weight-bold total recovered-total">1.69M Total </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-3 ">
+                        <div class="card deaths" onclick="changeDataSelection(this, 'deaths')">
+                            <div class="tab-selection"></div>
+                            <div class="card-body">
+                                <h6 class="card-title">Deaths</h6>
+                                <h3 class="card-subtitle mb-2 deaths-number">1,585,455 </h3>
+                                <div class="text-muted font-weight-bold total death-total">1.69M Total </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row map-container">
+                    <div class="col">
+                        <div id="map"></div>
+                    </div>
+                </div>
+                <div class="row chart-container mt-3">
+                    <div class="col linear-chart p-3 mr-3">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <div class="col p-3">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4 side-panel-container my-3">
+                <div class="cases-table-container">
+                    <h4>Live Cases by Country</h4>
+                    <div class="country-data">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Country Name</th>
+                                    <th scope="col">Cases</th>
+                                    <th scope="col">Recovered</th>
+                                    <th scope="col">Deaths</th>
+                                    <th scope="col">Tests</th>
+                                </tr>
+                            </thead>
+                            <!--Give tbody an id so that we can append html in JS to it-->
+                            <tbody id="table-data">
+                                <!-- <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>Larry</td>
+                                <td>the Bird</td>
+                                <td>@twitter</td>
+                            </tr> -->
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+    </div>
+    </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1wxMm4PogmP_rpZyTv9fOLFGbdTEFtI8&callback=initMap"
+        async defer></script>
+    <!--Import Boot strap files into our project-->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/dropdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.js"></script>
+</body>
+
+</html>
