@@ -146,6 +146,7 @@ getCountryData = (countryIso) => {
     setMapCenter(data.countryInfo.lat, data.countryInfo.long, 3);
     console.log(data);
     setStatsData(data);
+    showIndividualCountryDataInTable(data);
   })
 
 }
@@ -207,13 +208,19 @@ const getHistoricalData = () => {
 
 const showIndividualCountryDataInTable = (data) =>
 {
-
-  var input = document.getElementById('country-name').value;
-  if(!input){
+console.log("Worldwide selection value: ", worldWideSelection.value);
+  // var input = document.getElementById('country-name').value;
+     //var input = document.getElementById('country').value;
+  
+  // if(!input){
+  //     return;
+  // }
+    
+  if(worldWideSelection.value === 'www'){
       return;
   }
 
-  console.log(input);
+  //console.log(input);
   var html = '';
   var strCases = '';
   var strRecovered = '';
